@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.http import HttpRequest as request
 from . import models
 
 BASE_URL = "http://127.0.0.1:8000/"
@@ -31,8 +31,9 @@ class ReservationSerializer(serializers.ModelSerializer):
         if models.Reservation.objects.filter(
                 reserved_from__range=(data['reserved_from'], data['reserved_to'])) or models.Reservation.objects.filter(
                 reserved_to__range=(data['reserved_from'], data['reserved_to'])).filter(car=data['car']):
-            raise serializers.ValidationError(
-                "There are already some reservations at given date.")
+            if self.context['request'].method == 'POST':
+                raise serializers.ValidationError({'reservation_date':
+                                                   "There are already some reservations at given date."})
 
         if data['reserved_from'] > data['reserved_to']:
             raise serializers.ValidationError("Finish must occur after start.")
