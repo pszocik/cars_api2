@@ -8,7 +8,7 @@ class Car(models.Model):
     service_date = models.DateTimeField()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class Reservation(models.Model):
@@ -19,4 +19,4 @@ class Reservation(models.Model):
     reserved_to = models.DateTimeField()
 
     def __str__(self):
-        return f'{self.reserved_from}-{self.reserved_to}'
+        return f'{self.car}'

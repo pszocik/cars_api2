@@ -1,8 +1,9 @@
+from django.contrib import admin
+from django.urls import include, path
+
+from api import views
 from rest_framework import routers
 from rest_framework_extensions.routers import NestedRouterMixin
-from api import views
-from django.urls import include, path
-from django.contrib import admin
 
 
 class NestedDefaultRouter(NestedRouterMixin, routers.DefaultRouter):

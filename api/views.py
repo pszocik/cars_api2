@@ -1,12 +1,14 @@
-from rest_framework import viewsets, status
-from . import models, serializers
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import NestedViewSetMixin
+
+from . import models, serializers
 
 
 class CarViewset(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = models.Car.objects.all()
     serializer_class = serializers.CarSerializer
+    lookup_fields = ['car-detail', ]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -19,3 +21,4 @@ class CarViewset(NestedViewSetMixin, viewsets.ModelViewSet):
 class ReservationViewset(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = models.Reservation.objects.all()
     serializer_class = serializers.ReservationSerializer
+    lookup_fields = ['reservation-detail', ]

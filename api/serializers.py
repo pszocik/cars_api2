@@ -1,19 +1,31 @@
 from rest_framework import serializers
+
 from . import models
+
+BASE_URL = "http://127.0.0.1:8000/"
 
 
 class CarSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='car-detail', read_only=True)
+    reservations = serializers.SerializerMethodField('get_reservations')
+
     class Meta:
         model = models.Car
-        fields = '__all__'
+        fields = ('name', 'brand', 'registration_number',
+                  'service_date', 'url', 'reservations')
+
+    def get_reservations(self, obj):
+        return f"{BASE_URL}api/cars/{obj.id}/reservations/"
 
 
 class ReservationSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField('get_url')
 
     class Meta:
         model = models.Reservation
         fields = ('id', 'car', 'reserved_by',
-                  'reserved_from', 'reserved_to')
+                  'reserved_from', 'reserved_to', 'url')
 
     def validate(self, data):
         if models.Reservation.objects.filter(
@@ -28,3 +40,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "You can't make a reservation after service date.")
         return data
+
+    def get_url(self, obj):
+        id = models.Car.objects.get(name=obj).id
+        return f"{BASE_URL}api/cars/{id}/reservations/{obj.id}"
